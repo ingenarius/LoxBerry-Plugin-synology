@@ -37,7 +37,7 @@ def main():
         cam_file = open("/opt/loxberry/data/plugins/synology/cameras.dat", "w")
         cam_list = ds.GetCams()
         if cam_list != '':
-            for c in self.cam_list.json().get('data').get('cameras'):
+            for c in cam_list.json().get('data').get('cameras'):
                 c_id = str(c.get('id'))
                 c_vendor = str(c.get('vendor'))
                 c_model = str(c.get('model'))
