@@ -1,0 +1,298 @@
+
+<div role=\"main\" class=\"ui-content\">
+<div class=\"ui-body ui-body-a ui-corner-all loxberry-logo\">
+<div style=\"margin: 5%;\">
+
+<img src="/system/images/icons/synology/icon_64.png">
+<h2>Synology Surveillance Station Plugin</h2>
+
+<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi">
+	<input type="hidden" name="savedata" id="savedata" value="1">
+	<input type="hidden" name="stored_pwd" id="stored_pwd" value="<!--$stored_pwd-->">
+	<input type="hidden" name="email_stored_pwd" id="email_stored_pwd" value="<!--$email_stored_pwd-->">
+		<div class="form-group">
+			<table class="formtable" border="0" width="100%">
+				<tr>
+					<td colspan=3><h3>Server <!--$txt_settings--></h3></td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelusername">Server Port *</label>
+					</td>
+					<td width="50%">
+						<input id="daemon_port" name="daemon_port" type="text" class="textfield"
+							value="<!--$daemon_port-->">
+					</td>
+					<td width="25%" style="color: grey;">
+						<!--$hlp_udp_port-->
+					</td>
+				</tr>
+				<tr>
+					<td colspan=3><h3>Diskstation <!--$txt_settings--></h3></td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelusername">Diskstation <!--$txt_user--> *</label>
+					</td>
+					<td width="50%">
+						<input id="username" name="username" type="text" class="textfield"
+							value="<!--$username-->" data-validation-error-msg="* Please enter your Diskstation username">
+					</td>
+					<td width="25%" style="color: grey;">
+						<!--$hlp_user-->
+					</td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelpassword">Diskstation <!--$txt_pwd--> *</label>
+					</td>
+					<td width="50%">
+						<input id="pwd" name="pwd" type="password" class="textfield"
+							value="<!--$pwd-->" data-validation-error-msg="* Please enter your Diskstation password">
+					</td>
+					<td width="25%" style="color: grey;">
+						<!--$hlp_initial-->
+					</td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelfbpass">Hostname (IP) *</label>
+					</td>
+					<td width="50%">
+						<input id="host" name="host" type="text" class="textfield"
+							value="<!--$host-->" data-validation-error-msg="* Please enter your Diskstation hostname">
+					</td>
+					<td width="25%" style="color: grey;">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelmsudpport">Diskstation API Port *</label>
+					</td>
+					<td width="50%">
+						<input id="port" name="port" type="text" class="textfield"
+							value="<!--$port-->" data-validation-error-msg="* Please enter the Diskstation API Port Number">
+					</td>
+					<td width="25%" style="color: grey;">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelcids"><!--$txt_cam_ids--> *</label>
+					</td>
+					<td width="50%">
+						<input id="cids" name="cids" type="text" class="textfield"
+							value="<!--$cids-->" data-validation-error-msg="* Please enter the Camera IDs">
+                            <div id="cams_available" name="cams_available" style="display:none;"><!--$txt_installed_cams--><br>
+                                <!--$cam_ids-->
+                            </div>
+					</td>
+					<td width="25%" style="color: grey;" style="vertical-align: top;">
+						<!--$hlp_cam_list--> <span id="cams"><a href="#"><!--$txt_show--></a></span>
+                    </td>
+				</tr>
+				<tr>
+					<td width="25%">
+						<label id="labelmsudpport">Email</label>
+					</td>
+					<td width="50%">
+						<input id="notification" name="notification" type="text" class="textfield"
+							value="<!--$notification-->" data-validation-error-msg="* Please enter your notification email address">
+					</td>
+					<td width="25%" style="color: grey;">
+						&nbsp;
+					</td>
+				</tr>			
+				<tr>
+					<td width="25%">
+						<label id="labelsentvia">Snapshot <!--$txt_send--> via</label>
+					</td>
+					<td width="50%">
+						<select id="sent_via" name="sent_via" data-mini="true">
+							<!--$sent_via_list-->
+						</select>
+					</td>
+					<td width="25%" style="color: grey;">
+                        &nbsp;
+					</td>
+				</tr>			
+				<tr>
+					<td colspan=3>
+                        <table class="formtable" border="0" width="100%" id="telegram_table" name="telegram_table">
+                            <tr>
+                                <td colspan=3><h3>Telegram <a href="https://core.telegram.org/api" target="_blank">API</a> <!--$txt_settings--></h3></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">
+                                    <label id="labeltbottoken">Telegram Bot Token</label>
+                                </td>
+                                <td width="50%">
+                                    <input id="tbot_token" name="tbot_token" type="text" class="textfield" value="<!--$tbot_token-->"> 
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%">
+                                    <label id="labeltbottoken">Telegram Chat ID</label>
+                                </td>
+                                <td width="50%">
+                                    <input id="tbot_chat_id" name="tbot_chat_id" type="text" class="textfield"
+                                        value="<!--$tbot_chat_id-->">
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table> 
+                    </td>
+                </tr>
+				<tr>
+					<td colspan=3>
+                        <table class="formtable" border="0" width="100%" id="email_table" name="email_table">
+                            <tr>
+                                <td colspan=3><h3>Email <!--$txt_settings--></h3></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">
+                                    <label id="labelsmtp">SMTP Server</label>
+                                </td>
+                                <td width="50%">
+                                    <input id="email_smtp" name="email_smtp" type="text" class="textfield" value="<!--$email_smtp-->"> 
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%">
+                                    <label id="labelsmtpport">SMTP Server Port</label>
+                                </td>
+                                <td width="50%">
+                                    <input id="email_smtp_port" name="email_smtp_port" type="text" class="textfield"
+                                        value="<!--$email_smtp_port-->">
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    <!--$hlp_smtp_port-->
+                                </td>
+                            </tr>
+                            <!--<tr>
+                                <td width="25%">
+                                    <label id="labelusetls">TLS</label>
+                                </td>
+                                <td width="50%">
+                                    <select id="email_use_tls" name="email_use_tls" data-mini="true">
+							            <option value="1"><!--$txt_yes--> <!--</option>
+							            <option value="0"><!--$txt_no--> <!--</option>
+						            </select>
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    <!--$hlp_email_tls--> <!--
+                                </td>
+                            </tr> -->
+                            <tr>
+                                <td width="25%">
+                                    <label id="labelemailuser">SMTP <!--$txt_user--></label>
+                                </td>
+                                <td width="50%">
+                                    <input id="email_user" name="email_user" type="text" class="textfield"
+                                        value="<!--$email_user-->">
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%">
+                                    <label id="labelemailpwd">SMTP <!--$txt_pwd--></label>
+                                </td>
+                                <td width="50%">
+                                    <input id="email_pwd" name="email_pwd" type="password" class="textfield"
+                                        value="<!--$email_pwd-->" data-validation-error-msg="* Please enter your Diskstation password">
+                                </td>
+                                <td width="25%" style="color: grey;">
+                                    <!--$hlp_initial-->
+                                </td>
+                            </tr>
+                        </table> 
+                    </td>
+                </tr>
+				<tr>
+					<td width="25%">&nbsp</td>
+					<td width="50%"><input id="do" name="do" type="submit" value="<!--$txt_save-->"></td>
+					<td width="25%">&nbsp;</td>
+				</tr>		
+				<tr>
+					<td colspan=3 style="color: grey;"><!--$hlp_star_mand--></td>
+				</tr>
+				<tr>
+					<td>
+						<b><!--$txt_lcl_server-->: <!--$local_daemon--></b>
+					</td>
+					<td colspan=2>
+                        <a id="button" data-icon="check" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=start">Start</a>
+						<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=stop">Stop</a>
+						<a id="button" data-icon="info" data-role="button" data-inline="true" data-mini="false" 
+                            href="/admin/system/tools/logfile.cgi?logfile=plugins/synology/synology.log&header=html&format=template" 
+							target="_blank"><!--$txt_logfile--></a>
+					</td>
+				</tr>
+		</table>
+	</div>
+</form>
+<!--$restartMsg-->
+       
+
+<script>
+    var $messages = $('#form-error-message');
+    $.validate({
+        modules : 'security',
+        errorMessagePosition : $messages,
+    });
+    // show / hide block for telegram configuration parts
+    $(function() {
+        if($('#sent_via').val() == '1') {
+            $('#telegram_table').show();
+            $('#email_table').hide();
+        } 
+        else if ($('#sent_via').val() == '2') {
+            $('#telegram_table').hide();
+            $('#email_table').show();
+        }  
+        else {
+            $('#telegram_table').hide();
+            $('#email_table').hide();
+        }
+        $('#sent_via').change(function(){
+            if($('#sent_via').val() == '1') {
+                $('#telegram_table').show();
+                $('#email_table').hide(); 
+            } 
+            else if($('#sent_via').val() == '2') {
+                $('#telegram_table').hide();
+                $('#email_table').show(); 
+            } 
+            else {
+                $('#telegram_table').hide();
+                $('#email_table').hide(); 
+            }
+        });
+    });
+    
+    $(document).ready(function() {  
+        $("#cams").toggle(function() {
+            $(this).html("<a href='#'><!--$txt_hide--></a>");
+            $("#cams_available").show( "slow", function() { });
+        }, 
+        function() {
+            $(this).html("<a href='#'><!--$txt_show--></a>");
+            $("#cams_available").hide( "slow", function() { });
+        });
+    });
+</script>
+</div>
+</div>
+</div>

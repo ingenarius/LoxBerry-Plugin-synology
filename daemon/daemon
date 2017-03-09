@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Will be executed as user "root".
+
+# Name this file "daemon" in your plugin-archive. It will be renamed to NAME
+# during installation
+
+INSTALLFOLDER=REPLACEBYBASEFOLDER
+PLUGINFOLDER=REPLACEBYSUBFOLDER
+
+cmd="ps ux | grep syno_plugin.py | grep -v grep"
+start="python $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py"
+
+# run the command to check
+eval "$cmd" > /dev/null 2>&1
+
+# did the previous command return a non-zero exit code?
+if [ $? -ne 0 ]; then
+    is_running=0    # syno_plugin is stopped
+else
+    is_running=1    # syno_plugin is running
+fi
+
+case "$1" in
+    start)
+        if [ $is_running = 0 ]; then
+            $start &
+            touch /tmp/syno_plugin.lock
+        else
+            /usr/bin/logger "<INFO> syno_plugin is already running"
+        fi
+    ;;
+    stop)
+        if [ $is_running = 1 ]; then
+            kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')
+            rm /tmp/syno_plugin.lock
+        else
+            /usr/bin/logger "<INFO> syno_plugin is not running"
+        fi
+    ;;
+    restart)
+        if [ $is_running = 1 ]; then
+            /bin/sh $0 stop
+            sleep 3
+            /bin/sh $0 start
+        else
+            /bin/sh $0 start
+        fi
+    ;;
+    status)
+        if [ $is_running = 1 ]; then
+            echo "<INFO> syno_plugin is running..."
+        else
+            echo "<INFO> syno_plugin is stopped..."
+        fi
+    ;;
+    *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    ;;
+esac
+
+exit 0

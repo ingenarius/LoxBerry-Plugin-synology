@@ -12,6 +12,11 @@
 INSTALLFOLDER=REPLACEBYBASEFOLDER
 PLUGIN=REPLACEBYSUBFOLDER
 
-$INSTALLFOLDER/system/daemons/plugins/$PLUGIN start
+############################
+# RESTART listening server #
+############################
+$INSTALLFOLDER/system/daemons/plugins/$PLUGIN restart
+
+python "$INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/cameras.py &"
 
 exit 0
