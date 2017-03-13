@@ -1,5 +1,6 @@
 from synology import DiskStation
 from ConfigParser import ConfigParser
+from mail import Email
 from time import sleep
 import socket
 import logging
@@ -49,6 +50,7 @@ def main():
         SENT_VIA = 0
     MINISERVER = global_cfg.get("MINISERVER1", "IPADDRESS")
     INSTALLFOLDER = global_cfg.get("BASE", "INSTALLFOLDER")
+    logging.info("<INFO> loading configuration...")
     logging.info("<INFO> DiskStation - " + DS_HOST + ", " + DS_PORT + ", " + DS_USER + ", " + EMAIL)
     logging.info("<INFO> Camera IDs - " + CIDS)
     logging.info("<INFO> Miniserver - " + MINISERVER)	
@@ -57,7 +59,16 @@ def main():
         data, addr = sock.recvfrom( 1024 ) # read data with buffer size of 1024 bytes
         logging.info("<INFO> received message from %s: %s" % (addr[0], data))
 
-        if (addr[0] == MINISERVER):     # only the miniserver is allowed to send commands
+        if ( str(data).__contains__("TestMail") ):
+            email = Email()
+            response = email.SendMsg("Test from Loxberry", "This message was sent sucessfully from your Loxberry! \nHave fun :-) ")
+            if response == True:
+                logging.info("<INFO> successful executed \"%s\" " % data)
+            else:
+                logging.info("<ERROR> %s not executed" % data)
+            continue
+        
+        if (addr[0] == MINISERVER or addr[0] == "127.0.0.1"):     # only the miniserver is allowed to send commands
             # create DS object and login
             ds = DiskStation(DS_USER, DS_PWD, DS_HOST, DS_PORT, EMAIL, INSTALLFOLDER)
             s = ds.Login()
@@ -84,8 +95,7 @@ def main():
                         logging.info("<INFO> %s: executing for camera ID %s ..." % (data, str(c)))
                         response = ds.MotionDetectionOff(c)
                     else:
-                        return
-                sleep(3)        # wait before the next request will be sent
+                        continue
             # request does not match
             elif ( str(data).__contains__("Snapshot:") ):
                 logging.info("<INFO> %s: executing..." % data)
@@ -93,7 +103,7 @@ def main():
                     response = ds.GetSnapshot(data.split(":")[1])
                     if response == True and SENT_VIA != 0:
                         response = ds.SendSnapshot(SENT_VIA)	# send snapshot via: 1 - Telegram bot, 2 - Email
-                        sleep(5)
+                        sleep(3)
             else:
                 logging.info("<INFO> \"%s\" is no valid message!" % data)
                 response = False

@@ -45,14 +45,11 @@ class Email(object):
     def SendMsg(self, subj, body):
         """Send Email as text message"""
         try:
-            msg = """\
-            From: %s
-            To: %s
-            Subject: %s
-
-            %s
-            """ % (self.email_user, self.mail_to, subj, body)
-            response = self.ServerConnect(msg)
+            msg = MIMEText(body)
+            msg['Subject'] = subj
+            msg['From'] = self.email_user
+            msg['To'] = self.mail_to
+            response = self.ServerConnect(msg.as_string())
             if (response == True):
                 return True
             else:

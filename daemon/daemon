@@ -26,36 +26,48 @@ case "$1" in
         if [ $is_running = 0 ]; then
             $start &
             touch /tmp/syno_plugin.lock
+            exit 0
         else
             /usr/bin/logger "<INFO> syno_plugin is already running"
+            exit 0
         fi
     ;;
     stop)
         if [ $is_running = 1 ]; then
             kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')
             rm /tmp/syno_plugin.lock
+            exit 0
         else
             /usr/bin/logger "<INFO> syno_plugin is not running"
+            exit 0
         fi
     ;;
     restart)
         if [ $is_running = 1 ]; then
-            /bin/sh $0 stop
+            kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')
+            rm /tmp/syno_plugin.lock
             sleep 3
-            /bin/sh $0 start
+            $start &
+            touch /tmp/syno_plugin.lock
+            exit 0
         else
-            /bin/sh $0 start
+            $start &
+            touch /tmp/syno_plugin.lock
+            exit 0
         fi
     ;;
     status)
         if [ $is_running = 1 ]; then
             echo "<INFO> syno_plugin is running..."
+            exit 0
         else
             echo "<INFO> syno_plugin is stopped..."
+            exit 0
         fi
     ;;
     *)
     echo "Usage: $0 {start|stop|restart|status}"
+    exit 0
     ;;
 esac
 

@@ -3,7 +3,7 @@
 <div class=\"ui-body ui-body-a ui-corner-all loxberry-logo\">
 <div style=\"margin: 5%;\">
 
-<img src="/system/images/icons/synology/icon_64.png">
+<img src="/system/images/icons/<!--$psubfolder-->/icon_64.png">
 <h2>Synology Surveillance Station Plugin</h2>
 
 <form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi">
@@ -17,11 +17,11 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelusername">Server Port *</label>
+						<label for="daemon_port">Server Port *</label>
 					</td>
 					<td width="50%">
-						<input id="daemon_port" name="daemon_port" type="text" class="textfield"
-							value="<!--$daemon_port-->">
+						<input type="number" min="1024" max="65535" id="daemon_port" name="daemon_port" class="textfield" required
+							value="<!--$daemon_port-->" data-validation-error-msg="Please enter a number between 1024 and 65535">
 					</td>
 					<td width="25%" style="color: grey;">
 						<!--$hlp_udp_port-->
@@ -32,10 +32,10 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelusername">Diskstation <!--$txt_user--> *</label>
+						<label for="username">Diskstation <!--$txt_user--> *</label>
 					</td>
 					<td width="50%">
-						<input id="username" name="username" type="text" class="textfield"
+						<input id="username" name="username" type="text" class="textfield" required
 							value="<!--$username-->" data-validation-error-msg="* Please enter your Diskstation username">
 					</td>
 					<td width="25%" style="color: grey;">
@@ -44,7 +44,7 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelpassword">Diskstation <!--$txt_pwd--> *</label>
+						<label for="pwd">Diskstation <!--$txt_pwd--></label>
 					</td>
 					<td width="50%">
 						<input id="pwd" name="pwd" type="password" class="textfield"
@@ -56,11 +56,11 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelfbpass">Hostname (IP) *</label>
+						<label for="host">Hostname (IP) *</label>
 					</td>
 					<td width="50%">
-						<input id="host" name="host" type="text" class="textfield"
-							value="<!--$host-->" data-validation-error-msg="* Please enter your Diskstation hostname">
+						<input id="host" name="host" type="text" class="textfield" required
+							value="<!--$host-->" data-validation-error-msg="* Please enter your Diskstation hostname or IP">
 					</td>
 					<td width="25%" style="color: grey;">
 						&nbsp;
@@ -68,10 +68,10 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelmsudpport">Diskstation API Port *</label>
+						<label for="port">Diskstation API Port *</label>
 					</td>
 					<td width="50%">
-						<input id="port" name="port" type="text" class="textfield"
+						<input type="number" min="1" max="65535" id="port" name="port" class="textfield" required
 							value="<!--$port-->" data-validation-error-msg="* Please enter the Diskstation API Port Number">
 					</td>
 					<td width="25%" style="color: grey;">
@@ -80,12 +80,12 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelcids"><!--$txt_cam_ids--> *</label>
+						<label for="cids"><!--$txt_cam_ids--> *</label>
 					</td>
 					<td width="50%">
-						<input id="cids" name="cids" type="text" class="textfield"
-							value="<!--$cids-->" data-validation-error-msg="* Please enter the Camera IDs">
-                            <div id="cams_available" name="cams_available" style="display:none;"><!--$txt_installed_cams--><br>
+						<input id="cids" name="cids" type="text" pattern="(\d+)(,\s*\d+)*" class="textfield" required
+							value="<!--$cids-->" data-validation-error-msg="* Please enter the camera ID(s)">
+                            <div id="cams_available" name="cams_available" style="display:none;"><!--$txt_installed_cams-->: <br>
                                 <!--$cam_ids-->
                             </div>
 					</td>
@@ -95,10 +95,10 @@
 				</tr>
 				<tr>
 					<td width="25%">
-						<label id="labelmsudpport">Email</label>
+						<label for="notification">Email</label>
 					</td>
 					<td width="50%">
-						<input id="notification" name="notification" type="text" class="textfield"
+						<input id="notification" name="notification" type="email" class="textfield"
 							value="<!--$notification-->" data-validation-error-msg="* Please enter your notification email address">
 					</td>
 					<td width="25%" style="color: grey;">
@@ -107,7 +107,7 @@
 				</tr>			
 				<tr>
 					<td width="25%">
-						<label id="labelsentvia">Snapshot <!--$txt_send--> via</label>
+						<label for="sent_via">Snapshot <!--$txt_send--> via</label>
 					</td>
 					<td width="50%">
 						<select id="sent_via" name="sent_via" data-mini="true">
@@ -126,21 +126,21 @@
                             </tr>
                             <tr>
                                 <td width="25%">
-                                    <label id="labeltbottoken">Telegram Bot Token</label>
+                                    <label for="tbot_token">Telegram Bot Token</label>
                                 </td>
                                 <td width="50%">
-                                    <input id="tbot_token" name="tbot_token" type="text" class="textfield" value="<!--$tbot_token-->"> 
+                                    <input id="tbot_token" name="tbot_token" type="text" pattern="^[0-9]{1,}\:\w*" class="textfield" value="<!--$tbot_token-->"> 
                                 </td>
                                 <td width="25%" style="color: grey;">
-                                    &nbsp;
+                                    <div id="chats" name="chats"><!--$chat_ids--></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td width="25%">
-                                    <label id="labeltbottoken">Telegram Chat ID</label>
+                                    <label for="tbot_chat_id">Telegram Chat ID</label>
                                 </td>
                                 <td width="50%">
-                                    <input id="tbot_chat_id" name="tbot_chat_id" type="text" class="textfield"
+                                    <input id="tbot_chat_id" name="tbot_chat_id" type="number" class="textfield"
                                         value="<!--$tbot_chat_id-->">
                                 </td>
                                 <td width="25%" style="color: grey;">
@@ -158,44 +158,30 @@
                             </tr>
                             <tr>
                                 <td width="25%">
-                                    <label id="labelsmtp">SMTP Server</label>
+                                    <label for="email_smtp">SMTP Server</label>
                                 </td>
                                 <td width="50%">
                                     <input id="email_smtp" name="email_smtp" type="text" class="textfield" value="<!--$email_smtp-->"> 
                                 </td>
                                 <td width="25%" style="color: grey;">
-                                    &nbsp;
+                                    <div id="emails" name="emails"></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td width="25%">
-                                    <label id="labelsmtpport">SMTP Server Port</label>
+                                    <label for="email_smtp_port">SMTP Server Port</label>
                                 </td>
                                 <td width="50%">
-                                    <input id="email_smtp_port" name="email_smtp_port" type="text" class="textfield"
+                                    <input type="number" min="1" max="65535" id="email_smtp_port" name="email_smtp_port" class="textfield"
                                         value="<!--$email_smtp_port-->">
                                 </td>
                                 <td width="25%" style="color: grey;">
                                     <!--$hlp_smtp_port-->
                                 </td>
                             </tr>
-                            <!--<tr>
-                                <td width="25%">
-                                    <label id="labelusetls">TLS</label>
-                                </td>
-                                <td width="50%">
-                                    <select id="email_use_tls" name="email_use_tls" data-mini="true">
-							            <option value="1"><!--$txt_yes--> <!--</option>
-							            <option value="0"><!--$txt_no--> <!--</option>
-						            </select>
-                                </td>
-                                <td width="25%" style="color: grey;">
-                                    <!--$hlp_email_tls--> <!--
-                                </td>
-                            </tr> -->
                             <tr>
                                 <td width="25%">
-                                    <label id="labelemailuser">SMTP <!--$txt_user--></label>
+                                    <label for="email_user">SMTP <!--$txt_user--></label>
                                 </td>
                                 <td width="50%">
                                     <input id="email_user" name="email_user" type="text" class="textfield"
@@ -207,7 +193,7 @@
                             </tr>
                             <tr>
                                 <td width="25%">
-                                    <label id="labelemailpwd">SMTP <!--$txt_pwd--></label>
+                                    <label for="email_pwd">SMTP <!--$txt_pwd--></label>
                                 </td>
                                 <td width="50%">
                                     <input id="email_pwd" name="email_pwd" type="password" class="textfield"
@@ -221,9 +207,9 @@
                     </td>
                 </tr>
 				<tr>
-					<td width="25%">&nbsp</td>
-					<td width="50%"><input id="do" name="do" type="submit" value="<!--$txt_save-->"></td>
 					<td width="25%">&nbsp;</td>
+					<td width="50%"><input id="do" name="do" type="submit" value="<!--$txt_save-->"></td>
+					<td width="25%" style="color: grey;"><!--$hlp_daemon--></td>
 				</tr>		
 				<tr>
 					<td colspan=3 style="color: grey;"><!--$hlp_star_mand--></td>
@@ -233,8 +219,8 @@
 						<b><!--$txt_lcl_server-->: <!--$local_daemon--></b>
 					</td>
 					<td colspan=2>
-                        <a id="button" data-icon="check" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=start">Start</a>
-						<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=stop">Stop</a>
+                        <!--<a id="button" data-icon="check" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=start">Start</a>
+						<a id="button" data-icon="delete" data-role="button" data-inline="true" data-mini="false" href="./index.cgi?do=stop">Stop</a> -->
 						<a id="button" data-icon="info" data-role="button" data-inline="true" data-mini="false" 
                             href="/admin/system/tools/logfile.cgi?logfile=plugins/synology/synology.log&header=html&format=template" 
 							target="_blank"><!--$txt_logfile--></a>
@@ -243,15 +229,9 @@
 		</table>
 	</div>
 </form>
-<!--$restartMsg-->
-       
 
 <script>
-    var $messages = $('#form-error-message');
-    $.validate({
-        modules : 'security',
-        errorMessagePosition : $messages,
-    });
+	$('#main_form').validate();
     // show / hide block for telegram configuration parts
     $(function() {
         if($('#sent_via').val() == '1') {
@@ -290,6 +270,36 @@
         function() {
             $(this).html("<a href='#'><!--$txt_show--></a>");
             $("#cams_available").hide( "slow", function() { });
+        });
+    });
+    // provide a telegram API test link, if a token is already stored in the config file
+    $(document).ready(function() {
+        if ($("#tbot_token").val()) {
+            var tbot_url = "https://api.telegram.org/bot" + $("#tbot_token").val() + "/getUpdates";
+            $("#chats").html("<a href=\"" + tbot_url + "\" target=\"_blank\">Test Telegram Bot</a>");
+        }
+    });
+    // provide a telegram API test link, if a token is filled in 
+    $("#tbot_token").change(function() {
+        if ($("#tbot_token").val()) {
+            var tbot_url = "https://api.telegram.org/bot" + $("#tbot_token").val() + "/getUpdates";
+            $("#chats").html("<a href=\"" + tbot_url + "\" target=\"_blank\">Test Telegram Bot</a>");
+        }
+        else { // link will be deleted, if the token field is empty
+            $("#chats").html("");
+        }
+    });
+    // provide an email test link, if an smtp server is already stored in the config file
+    $(document).ready(function() {
+        if ( $("#email_smtp").val() != "" && $("#email_user").val() != "" && $("#email_stored_pwd").val() != "" && $("#email_smtp_port").val() != 0 ) {
+            $("#emails").html("<span id=\"test_email\"><a href=\"#\">Test Email</a></span>"); }
+        else { 
+            $("#emails").html("<!--$hlp_email-->"); 
+        } 
+    });
+    $(function() {
+        $('#test_email').on('click', function () {
+            $.ajax({type:"GET", url: './index.cgi?do=email'});
         });
     });
 </script>

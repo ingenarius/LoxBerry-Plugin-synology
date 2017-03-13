@@ -8,6 +8,7 @@ use HTML::Entities;
 use String::Escape qw( unquotemeta );
 use JSON qw( decode_json );
 use MIME::Base64 qw( encode_base64 );
+use IO::Socket::INET;
 use warnings;
 use strict;
 no strict "refs"; # we need it for template system
@@ -52,6 +53,7 @@ our @cameras;
 # ---------------------------------------
 # Notification variables
 # ---------------------------------------
+our $chat_ids;
 our $email_pwd;
 our $email_stored_pwd;
 our $email_smtp;
@@ -66,6 +68,8 @@ our $tbot_token;
 # language variables
 # ---------------------------------------
 our $hlp_cam_list;
+our $hlp_daemon;
+our $hlp_email;
 our $hlp_email_tls;
 our $hlp_initial;
 our $hlp_smtp_port;
@@ -73,6 +77,7 @@ our $hlp_star_mand;
 our $hlp_udp_port;
 our $hlp_user;
 our $txt_cam_ids;
+our $txt_chat_ids_avail;
 our $txt_hide;
 our $txt_installed_cams;
 our $txt_lcl_server;
@@ -94,7 +99,6 @@ our $txt_yes;
 $cfg             = new Config::Simple("$home/config/system/general.cfg");
 $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
 $lang            = $cfg->param("BASE.LANG");
-#$miniserver      = $cfg->param("BASE.MINISERVERS");
 
 print "Content-Type: text/html\n\n";
 
@@ -138,20 +142,20 @@ else { $port = $port;  } } else { $port = quotemeta($query{'port'}); }
 if ( !$query{'notification'} )   { if ( param('notification')  ) { $notification = quotemeta(param('notification')); } 
 else { $notification = $notification;  } } else { $notification = quotemeta($query{'notification'}); }	
 
-if ( !$query{'cids'} )   { if ( param('cids')  ) { $cids = quotemeta(param('cids'));         } 
-else { $cids = $cids;  } } else { $cids = quotemeta($query{'cids'});   }
+if ( !$query{'cids'} )   { if ( param('cids')  ) { $cids = param('cids'); } 
+else { $cids = $cids;  } } else { $cids = $query{'cids'}; }
 
 if ( !$query{'sent_via'} )   { if ( param('sent_via')  ) { $sent_via = param('sent_via');         } 
 else { $sent_via = $sent_via;  } } else { $sent_via = $query{'sent_via'};   }
 
-if ( $sent_via eq 1 ) {
+if ( $sent_via eq "1" ) {
     if ( !$query{'tbot_token'} )   { if ( param('tbot_token')  ) { $tbot_token = quotemeta(param('tbot_token'));         } 
     else { $tbot_token = $tbot_token;  } } else { $tbot_token = quotemeta($query{'tbot_token'});   }
 
     if ( !$query{'tbot_chat_id'} )   { if ( param('tbot_chat_id')  ) { $tbot_chat_id = quotemeta(param('tbot_chat_id'));         } 
     else { $tbot_chat_id = $tbot_chat_id;  } } else { $tbot_chat_id = quotemeta($query{'tbot_chat_id'});   }
 } 
-if ( $sent_via eq 2 ) {
+if ( $sent_via eq "2" ) {
     if ( !$query{'email_smtp'} )   { if ( param('email_smtp')  ) { $email_smtp = quotemeta(param('email_smtp'));         } 
     else { $email_smtp = $email_smtp;  } } else { $email_smtp = quotemeta($query{'email_smtp'});   }
 
@@ -193,19 +197,28 @@ if (param('savedata')) {
     $conf->param('DISKSTATION.HOST', unquotemeta($host));
     $conf->param('DISKSTATION.PORT', unquotemeta($port));
     $conf->param('DISKSTATION.NOTIFICATION', unquotemeta($notification));
-    $conf->param('DISKSTATION.CIDS', unquotemeta($cids));
+    $conf->param('DISKSTATION.CIDS', '"'.$cids.'"');
     $conf->param('DISKSTATION.SENT_VIA', $sent_via);
     if ( $sent_via eq 1 ) { # Telegram
         $conf->param('TELEGRAM.TOKEN', unquotemeta($tbot_token));
         $conf->param('TELEGRAM.CHAT_ID', unquotemeta($tbot_chat_id));
     }
-    if ( $sent_via eq 2 ) { # Email
+    elsif ( $sent_via eq 2 ) { # Email
         $conf->param('EMAIL.SMTP', unquotemeta($email_smtp));
         $conf->param('EMAIL.SMTP_PORT', unquotemeta($email_smtp_port));
         #$conf->param('EMAIL.USE_TLS', unquotemeta($email_use_tls));
         $conf->param('EMAIL.USER', unquotemeta($email_user));
         if ($email_pwd eq "") { $conf->param('EMAIL.PWD', $email_stored_pwd); } else { $conf->param('EMAIL.PWD', encode_base64($email_pwd, '')); }
     }
+	else { # none
+		$conf->param('TELEGRAM.TOKEN', '');
+        $conf->param('TELEGRAM.CHAT_ID', '');
+		$conf->param('EMAIL.SMTP', '');
+        $conf->param('EMAIL.SMTP_PORT', '');
+        #$conf->param('EMAIL.USE_TLS', '');
+        $conf->param('EMAIL.USER', '');
+		$conf->param('EMAIL.PWD', '');
+	}
     
     $conf->save();
     
@@ -243,15 +256,6 @@ $email_user = encode_entities($conf->param('EMAIL.USER'));
 $email_stored_pwd = encode_entities($conf->param('EMAIL.PWD'));
 
 # ---------------------------------------
-# Set Enabled / Disabled switch
-# ---------------------------------------
-#if ($enabled eq "1") {
-#	$Enabledlist = '<option value="0">No</option><option value="1" selected>Yes</option>\n';
-#} else {
-#	$Enabledlist = '<option value="0" selected>No</option><option value="1">Yes</option>\n';
-#}
-
-# ---------------------------------------
 # Init Language
 # ---------------------------------------
 # Clean up lang variable
@@ -270,6 +274,8 @@ $phraseplugin           = new Config::Simple($languagefileplugin);
 # Fill language variables
 # ---------------------------------------
 $hlp_cam_list = $phraseplugin->param("HLP_CAM_LIST");
+$hlp_daemon = $phraseplugin->param("HLP_DAEMON");
+$hlp_email = $phraseplugin->param("HLP_EMAIL");
 $hlp_email_tls = $phraseplugin->param("HLP_EMAIL_TLS");
 $hlp_initial = $phraseplugin->param("HLP_INITIAL");
 $hlp_smtp_port = $phraseplugin->param("HLP_SMTP_PORT");
@@ -277,6 +283,7 @@ $hlp_star_mand = $phraseplugin->param("HLP_STAR_MAND");
 $hlp_udp_port = $phraseplugin->param("HLP_UDP_PORT");
 $hlp_user = $phraseplugin->param("HLP_USER");
 $txt_cam_ids = $phraseplugin->param("TXT_CAM_IDS");
+$txt_chat_ids_avail = $phraseplugin->param("TXT_CHAT_IDS_AVAIL");
 $txt_hide = $phraseplugin->param("TXT_HIDE");
 $txt_installed_cams = $phraseplugin->param("TXT_INSTALLED_CAMS");
 $txt_lcl_server = $phraseplugin->param("TXT_LCL_SERVER");
@@ -296,11 +303,13 @@ $txt_yes = $phraseplugin->param("TXT_YES");
 # ---------------------------------------
 if ( param('do') ) { 
     $do = quotemeta( param('do') ); 
-    if ( $do eq "start") {
-        system("$installfolder/system/daemons/plugins/$psubfolder start");
-    }
-    if ( $do eq "stop") {
-        system("$installfolder/system/daemons/plugins/$psubfolder stop");
+    if ( $do eq "email") {
+        my $sock = new IO::Socket::INET(PeerAddr => '127.0.0.1',
+                PeerPort => $daemon_port,
+                Proto => 'udp', Timeout => 1) or die('Error opening socket.');
+        my $data = "TestMail";
+        send($sock, $data, 0);
+        exit;
     }
 }
 

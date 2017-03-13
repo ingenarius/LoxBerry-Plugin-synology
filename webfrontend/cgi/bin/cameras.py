@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from synology import DiskStation
 from ConfigParser import ConfigParser
 from time import sleep

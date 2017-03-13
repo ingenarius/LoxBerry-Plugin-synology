@@ -191,7 +191,8 @@ class DiskStation(object):
         try:
             url_param = 'entry.cgi?version=9&id=%s&api="SYNO.SurveillanceStation.Camera"&method="GetSnapshot"&profileType=0&_sid=%s' % (str(cam_id), self.sid)
             url = self.api_url + url_param
-            with open("/opt/loxberry/data/plugins/synology/snapshot.jpg", 'wb') as handle:
+            snapshot = "%s/data/plugins/synology/snapshot.jpg" % self.installfolder
+            with open(snapshot, 'wb') as handle:
                 response = requests.get(url, stream=True)
                 logging.info(response)
                 if not response.ok:
@@ -215,7 +216,7 @@ class DiskStation(object):
         if send_option == 1:
             try:
                 bot = MyTelegramBot()
-                response = bot.send_photo("/opt/loxberry/data/plugins/synology/snapshot.jpg")
+                response = bot.send_photo("%s/data/plugins/synology/snapshot.jpg" % self.installfolder)
                 if response == True:
                     logging.info("<INFO> Photo sent to Telegram!")
                     return True
@@ -227,7 +228,7 @@ class DiskStation(object):
         elif send_option == 2:
             try:
                 m = Email()
-                m.SendAttachment("Snapshot", "Greetings from your Loxberry", "/opt/loxberry/data/plugins/synology/snapshot.jpg")
+                m.SendAttachment("Snapshot", "Greetings from your Loxberry", "%s/data/plugins/synology/snapshot.jpg" % self.installfolder)
             except:
                 logging.info("<INFO> sending email not implemented yet")
                 return False
