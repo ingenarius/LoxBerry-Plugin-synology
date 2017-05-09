@@ -46,8 +46,6 @@ echo "<INFO> replacing folder strings in daemon script"
 echo "<INFO> replacing folder strings in cron script"
 /bin/sed -i "s#REPLACEBYSUBFOLDER#$ARGV3#" $ARGV5/system/cron/cron.01min/$ARGV2
 /bin/sed -i "s#REPLACEBYBASEFOLDER#$ARGV5#" $ARGV5/system/cron/cron.01min/$ARGV2
-/bin/sed -i "s#REPLACEBYSUBFOLDER#$ARGV3#" $ARGV5/system/cron/cron.10min/$ARGV2
-/bin/sed -i "s#REPLACEBYBASEFOLDER#$ARGV5#" $ARGV5/system/cron/cron.10min/$ARGV2
 /bin/sed -i "s#REPLACEBYSUBFOLDER#$ARGV3#" $ARGV5/system/cron/cron.daily/$ARGV2
 /bin/sed -i "s#REPLACEBYBASEFOLDER#$ARGV5#" $ARGV5/system/cron/cron.daily/$ARGV2
 
