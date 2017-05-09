@@ -6,3 +6,4 @@ python-configparser
 python-pysocks
 python-pip
 libstring-escape-perl
+libjson-perl
