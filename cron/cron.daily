@@ -17,6 +17,6 @@ PLUGIN=REPLACEBYSUBFOLDER
 ############################
 $INSTALLFOLDER/system/daemons/plugins/$PLUGIN restart
 
-python "$INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/cameras.py &"
+python $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGIN/bin/cameras.py &
 
 exit 0
