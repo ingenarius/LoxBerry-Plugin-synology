@@ -10,6 +10,7 @@ PLUGINFOLDER=REPLACEBYSUBFOLDER
 
 cmd="ps ux | grep syno_plugin.py | grep -v grep"
 start="python $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py"
+stop="kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')"
 
 # run the command to check
 eval "$cmd" > /dev/null 2>&1
@@ -26,6 +27,7 @@ case "$1" in
         if [ $is_running = 0 ]; then
             $start &
             touch /tmp/syno_plugin.lock
+            /usr/bin/logger "<INFO> syno_plugin was started..."
             exit 0
         else
             /usr/bin/logger "<INFO> syno_plugin is already running"
@@ -34,8 +36,9 @@ case "$1" in
     ;;
     stop)
         if [ $is_running = 1 ]; then
-            kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')
+            $stop &
             rm /tmp/syno_plugin.lock
+            /usr/bin/logger "<INFO> syno_plugin was stopped..."
             exit 0
         else
             /usr/bin/logger "<INFO> syno_plugin is not running"
@@ -44,15 +47,18 @@ case "$1" in
     ;;
     restart)
         if [ $is_running = 1 ]; then
-            kill $(ps aux | grep "[p]ython $INSTALLFOLDER/webfrontend/cgi/plugins/$PLUGINFOLDER/bin/syno_plugin.py" | awk '{print $2}')
+            $stop &
             rm /tmp/syno_plugin.lock
-            sleep 3
+            /usr/bin/logger "<INFO> syno_plugin was stopped..."
+            #sleep 3
             $start &
             touch /tmp/syno_plugin.lock
+            /usr/bin/logger "<INFO> syno_plugin was started..."
             exit 0
         else
             $start &
             touch /tmp/syno_plugin.lock
+            /usr/bin/logger "<INFO> syno_plugin was started..."
             exit 0
         fi
     ;;
