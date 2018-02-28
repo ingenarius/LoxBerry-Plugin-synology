@@ -223,14 +223,12 @@ if (param('savedata')) {
     $conf->save();
     
     # Actions will only be done, if the configuration changed at least once!
-    if ($initial eq "0") {
-        # RESTART syno_plugin.py
-        # this is necessary to load the new configuration!
-        system("$installfolder/system/daemons/plugins/$psubfolder restart");
-        # check for installed cameras after config change
-        $camcmd = 'python /opt/loxberry/webfrontend/cgi/plugins/synology/bin/cameras.py &';
-        system($camcmd);
-    }
+    # RESTART syno_plugin.py
+    # this is necessary to load the new configuration!
+    system("$installfolder/system/daemons/plugins/$psubfolder restart &");
+    # check for installed cameras after config change
+    $camcmd = 'python /opt/loxberry/webfrontend/cgi/plugins/synology/bin/cameras.py &';
+    system($camcmd);
 }
 
 
